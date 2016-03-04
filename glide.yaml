@@ -1,0 +1,7 @@
+package: revision.aeip.apigee.net/dia/infake
+import:
+- package: github.com/influxdata/influxdb
+  subpackages:
+  - client/v2
+- package: github.com/spf13/cobra
+- package: github.com/spf13/viper
