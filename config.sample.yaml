@@ -12,9 +12,9 @@ series:
       target_ipaddr: '205.188.201.151'
       target_port:  '80'
     fields:
-      2xx: 'int'
-      4xx: 'int'
-      5xx: 'int'
+      2xx: 'uint'
+      4xx: 'uint'
+      5xx: 'uint'
       latency_99: 'float'
     variables:
       - name: host
