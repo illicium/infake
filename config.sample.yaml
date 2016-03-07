@@ -1,5 +1,17 @@
 seed: 123
 
+output:
+  type: 'http'  # http,udp,stdout
+  http:
+    addr: 'http://localhost:8086'
+  udp:
+    addr: 'localhost:8089'
+  batchPoints:
+    precision: ''  # n,u,ms,s,m,h
+    database: 'infake'
+    retentionPolicy: ''
+    writeConsistency: 'quorum'  # one,quorum,all,any
+
 series:
   - id: http-outbound
     name: 'jmx-server-metrics-previous-http'

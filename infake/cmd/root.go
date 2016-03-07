@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -19,14 +18,23 @@ var RootCmd = &cobra.Command{
 	Long:  `Fake data generator for InfluxDB`,
 	Run: func(cmd *cobra.Command, args []string) {
 		gen := infake.NewGen(cfg)
+
+		consumer, err := infake.NewConsumer(cfg.Output)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
 		points, err := gen.Generate()
 
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		for p := range points {
-			fmt.Printf("%s\n", p)
+		err = consumer.Consume(points)
+
+		if err != nil {
+			log.Fatal(err)
 		}
 	},
 }
