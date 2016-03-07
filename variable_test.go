@@ -124,12 +124,12 @@ func testExpandNumeric(t *testing.T, v Variable, want []float64) {
 	}
 
 	if len(got) != len(want) {
-		t.Fatalf("(%+v).expandNumeric(): expected %v items, got %v", len(want), len(got))
+		t.Fatalf("(%+v).expandNumeric(): expected %v items, got %v", v, len(want), len(got))
 	}
 
 	for i, val := range want {
 		if got[i].Value != val {
-			t.Fatalf("(%+v).expandNumeric(): #%v: expected %v, got %v", i, val, got[i].Value)
+			t.Fatalf("(%+v).expandNumeric(): #%v: expected %v, got %v", v, i, val, got[i].Value)
 		}
 	}
 }
