@@ -175,3 +175,13 @@ func TestExpandNumericZeroStepTwo(t *testing.T) {
 
 	testExpandNumeric(t, v, []float64{3, 1})
 }
+
+func TestExpandNumericZeroStepEqual(t *testing.T) {
+	v := Variable{
+		Name: "var",
+		From: 123,
+		To:   123,
+	}
+
+	testExpandNumeric(t, v, []float64{123})
+}

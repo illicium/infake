@@ -43,7 +43,10 @@ func (v *Variable) expandNumeric() ([]Variable, error) {
 	}
 
 	if v.From == v.To && step == 0 {
-		return nil, fmt.Errorf("%q: From == To, Step != 0", v.Name)
+		newVar := *v
+		newVar.Value = v.From
+
+		return []Variable{newVar}, nil
 	}
 
 	if v.From < v.To && step < 0 {
