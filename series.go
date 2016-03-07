@@ -49,7 +49,7 @@ func (s *Series) genFields(rnd *rand.Rand) (map[string]interface{}, error) {
 		case "int":
 			f[k] = rnd.Int31n(2000) - 1000
 		case "uint":
-			f[k] = rnd.Uint32()
+			f[k] = uint32(rnd.Int31n(1000))
 		case "float":
 			f[k] = rnd.Float64()
 		default:
