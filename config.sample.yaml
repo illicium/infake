@@ -14,6 +14,10 @@ output:
 
 series:
   - id: http-outbound
+    timeRange:
+      from: '2016-01-01T00:00:00.000000000Z'
+      to: '2016-01-01T00:00:10.000000000Z'
+      step: '1s'
     name: 'jmx-server-metrics-previous-http'
     tags:
       type: 'outbound'

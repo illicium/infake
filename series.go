@@ -4,10 +4,12 @@ import (
 	"log"
 	"math/rand"
 	"text/template"
+	"time"
 )
 
 type Series struct {
 	Id        string
+	TimeRange TimeRangeConfig
 	Name      string
 	Tags      map[string]string
 	Fields    map[string]string
@@ -60,7 +62,7 @@ func (s *Series) genFields(rnd *rand.Rand) (map[string]interface{}, error) {
 	return f, nil
 }
 
-func (s *Series) genPoint(rnd *rand.Rand, tpls *SeriesTemplates, boundVars map[string]interface{}, vars []Variable, c chan<- Point) error {
+func (s *Series) genPoint(rnd *rand.Rand, tpls *SeriesTemplates, boundVars map[string]interface{}, vars []Variable, t time.Time, c chan<- Point) error {
 	if len(vars) > 0 {
 		expanded, err := vars[0].Expand()
 
@@ -71,7 +73,7 @@ func (s *Series) genPoint(rnd *rand.Rand, tpls *SeriesTemplates, boundVars map[s
 		for _, ev := range expanded {
 			boundVars[ev.Name] = ev.Value
 
-			if err := s.genPoint(rnd, tpls, boundVars, vars[1:], c); err != nil {
+			if err := s.genPoint(rnd, tpls, boundVars, vars[1:], t, c); err != nil {
 				return err
 			}
 		}
@@ -100,7 +102,7 @@ func (s *Series) genPoint(rnd *rand.Rand, tpls *SeriesTemplates, boundVars map[s
 			return err
 		}
 
-		p, err := NewPoint(name, tags, fields)
+		p, err := NewPoint(name, tags, fields, t)
 
 		if err != nil {
 			return err
@@ -127,10 +129,26 @@ func (s *Series) Generate(rnd *rand.Rand) (<-chan Point, error) {
 			return
 		}
 
-		boundVars := make(map[string]interface{})
+		tr, err := NewTimeRange(s.TimeRange)
 
-		if err := s.genPoint(rnd, tpls, boundVars, s.Variables, c); err != nil {
+		if err != nil {
 			log.Print(err)
+			return
+		}
+
+		times, err := tr.Values()
+
+		if err != nil {
+			log.Print(err)
+			return
+		}
+
+		for _, t := range times {
+			boundVars := make(map[string]interface{})
+
+			if err := s.genPoint(rnd, tpls, boundVars, s.Variables, t, c); err != nil {
+				log.Print(err)
+			}
 		}
 	}()
 
