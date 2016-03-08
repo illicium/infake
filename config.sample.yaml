@@ -1,7 +1,7 @@
 seed: 123
 
 output:
-  type: 'http'  # http,udp,stdout
+  type: 'stdout'  # http,udp,stdout
   http:
     addr: 'http://localhost:8086'
   udp:
