@@ -1,9 +1,6 @@
 package infake
 
-import (
-	"fmt"
-	"math"
-)
+import "fmt"
 
 type Variable struct {
 	Name   string
@@ -57,12 +54,12 @@ func (v *Variable) expandNumeric() ([]Variable, error) {
 		return nil, fmt.Errorf("%q: infinite sequence: To < From, Step > 0", v.Name)
 	}
 
-	var n int
+	var n uint
 
-	if v.From < v.To {
-		n = int((v.To-v.From)/math.Abs(step) + 1)
+	if step > 0 { // from < to
+		n = uint((v.To-v.From)/step + 1)
 	} else {
-		n = int((v.From-v.To)/math.Abs(step) + 1)
+		n = uint((v.From-v.To)/-step + 1)
 	}
 
 	vars := make([]Variable, 0, n)
