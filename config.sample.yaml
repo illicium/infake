@@ -11,6 +11,7 @@ output:
     database: 'infake'
     retentionPolicy: ''
     writeConsistency: 'quorum'  # one,quorum,all,any
+  batchSize: 1000
 
 series:
   - id: http-outbound

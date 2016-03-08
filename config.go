@@ -14,4 +14,5 @@ type OutputConfig struct {
 	HTTP        client.HTTPConfig
 	UDP         client.UDPConfig
 	BatchPoints client.BatchPointsConfig
+	BatchSize   uint
 }
