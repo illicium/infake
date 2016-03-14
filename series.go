@@ -5,11 +5,13 @@ import (
 	"math/rand"
 	"text/template"
 	"time"
+
+	"revision.aeip.apigee.net/dia/infake/timerange"
 )
 
 type Series struct {
 	Id        string
-	TimeRange TimeRangeConfig
+	TimeRange timerange.TimeRangeConfig
 	Name      string
 	Tags      map[string]string
 	Fields    map[string]string
@@ -129,7 +131,7 @@ func (s *Series) Generate(rnd *rand.Rand) (<-chan Point, error) {
 			return
 		}
 
-		tr, err := NewTimeRange(s.TimeRange)
+		tr, err := timerange.New(s.TimeRange)
 
 		if err != nil {
 			log.Print(err)

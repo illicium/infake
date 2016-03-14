@@ -1,4 +1,4 @@
-package infake
+package timerange
 
 import (
 	"testing"

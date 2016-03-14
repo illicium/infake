@@ -1,4 +1,4 @@
-package infake
+package timerange
 
 import (
 	"errors"
@@ -17,7 +17,7 @@ type TimeRangeConfig struct {
 	Step string
 }
 
-func NewTimeRange(c TimeRangeConfig) (*TimeRange, error) {
+func New(c TimeRangeConfig) (*TimeRange, error) {
 	var from time.Time
 	var to time.Time
 	var step time.Duration
