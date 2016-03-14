@@ -1,25 +1,47 @@
+# Seed for all random data (field values) generated. This
+# ensures that the same values are generated across runs. (int)
 seed: 123
 
 output:
-  type: 'stdout'  # http,udp,stdout
+  # Point consumer type, one of:
+  #   * http (InfluxDB HTTP protocal; see `http` section)
+  #   * udp (InfluxDB UDP protocol; see `udp` protocol)
+  #   * stdout (InfluxDB line protocol on standard out)
+  type: 'stdout'
+  # 'http' output type configuration
+  # See: https://godoc.org/github.com/influxdata/influxdb/client/v2#HTTPConfig
   http:
     addr: 'http://localhost:8086'
+  # 'udp' output type configuration
+  # See: https://godoc.org/github.com/influxdata/influxdb/client/v2#UDPConfig
   udp:
     addr: 'localhost:8089'
+  # Parameters for where and how each batch of points is stored.
+  # Don't forget to set `database`!
+  # See: https://godoc.org/github.com/influxdata/influxdb/client/v2#BatchPointsConfig
   batchPoints:
     precision: ''  # n,u,ms,s,m,h
     database: 'infake'
     retentionPolicy: ''
     writeConsistency: 'quorum'  # one,quorum,all,any
+  # Maximum number of points per batch (uint)
   batchSize: 1000
 
+# A series is a specification for generated measurements/points. All series
+# are generated independently, in parallel.
 series:
+  # ID to identify this series. This is not used for anything when generating the data
   - id: http-outbound
+    # Optional time range for points to generate. One point is generated for each time between
+    # `from` and `to` with the `step` duration between points.
+    # If omitted (e.g. commented), a single point with the current time is generated.
     timeRange:
       from: '2016-01-01T00:00:00.000000000Z'
       to: '2016-01-01T00:00:10.000000000Z'
       step: '1s'
+    # Measurement name (templated; see `variables`)
     name: 'jmx-server-metrics-previous-http'
+    # Tags key/value pairs. (values are templated; see `variables`)
     tags:
       type: 'outbound'
       host: '{{.host}}'
@@ -28,13 +50,25 @@ series:
       target_host: 'www.toolkit.mapquestapi.com'
       target_ipaddr: '205.188.201.151'
       target_port:  '80'
+    # Field key/value pairs. The value specifies either a type of value to generate
+    # or an explicit string.
+    #   * int: random unit -1000-1000
+    #   * uint: random uint 0-1000
+    #   * float: random float 0-1
+    #   * any other string is used as an explicit string value
     fields:
       2xx: 'uint'
       4xx: 'uint'
       5xx: 'uint'
       latency_99: 'float'
+    # Variables are used when templating measurement name, tags, and fields.
+    # The series generates a point for every combination of variable values at
+    # a given time.
+    # See: https://golang.org/pkg/text/template/
     variables:
+      # Variables are referenced by name in templates, e.g. {{.host}}
       - name: host
+        # Explicit set of values
         values:
           - 'abc000wo.us-west-2.e2e.4.apigee.com'
           - 'rmp147ea.us-ea.4.apigee.com'
@@ -43,6 +77,8 @@ series:
           - 'us-east-1'
           - 'us-west-2'
       - name: podNum
+        # Numeric value (float). Values are generated starting
+        # with `from`, ending with `to`, with an interval of `step`
         from: 0
         to: 3
         step: 1
