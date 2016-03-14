@@ -1,10 +1,10 @@
 hash: ff427c743bf0b0815856fe40d084c0c029deee865a5a08ae197511781945d36d
-updated: 2016-03-03T18:39:13.643637448-08:00
+updated: 2016-03-14T16:43:58.37714978-07:00
 imports:
 - name: github.com/BurntSushi/toml
   version: a4eecd407cf4129fc902ece859a0114e4cf1a7f4
 - name: github.com/hashicorp/hcl
-  version: 71c7409f1abba841e528a80556ed2c67671744c3
+  version: 567a5d1c4878a4ac8c198c730fd15f978b0529c7
   subpackages:
   - hcl/ast
   - hcl/parser
@@ -17,7 +17,7 @@ imports:
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
 - name: github.com/influxdata/influxdb
-  version: af0198448092f8a6adc41f2bc801c413e2579b90
+  version: c5bd96dfbaf076f71e4c43f1adccbbe450faefde
   subpackages:
   - client/v2
   - models
@@ -31,11 +31,11 @@ imports:
 - name: github.com/mitchellh/mapstructure
   version: d2dd0262208475919e1a362f675cfc0e7c10e905
 - name: github.com/spf13/cast
-  version: ee7b3e0353166ab1f3a605294ac8cd2b77953778
+  version: 27b586b42e29bec072fe7379259cc719e1289da6
 - name: github.com/spf13/cobra
   version: 65a708cee0a4424f4e353d031ce440643e312f92
 - name: github.com/spf13/jwalterweatherman
-  version: d00654080cddbd2b082acaa74007cb94a2b40866
+  version: 33c24e77fb80341fe7130ee7c594256ff08ccc46
 - name: github.com/spf13/pflag
   version: 7f60f83a2c81bc3c3c0d5297f61ddfa68da9d3b7
 - name: github.com/spf13/viper
