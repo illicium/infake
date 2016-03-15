@@ -32,6 +32,8 @@ func (gen *Gen) Generate() (<-chan Point, error) {
 
 	for _, series := range gen.Series {
 		go func(series Series) {
+			defer wg.Done()
+
 			sc, err := series.Generate(gen.rnd)
 
 			if err != nil {
@@ -42,8 +44,6 @@ func (gen *Gen) Generate() (<-chan Point, error) {
 			for p := range sc {
 				c <- p
 			}
-
-			wg.Done()
 		}(series)
 	}
 
