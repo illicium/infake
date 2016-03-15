@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -19,7 +20,7 @@ var RootCmd = &cobra.Command{
 	Long:  `Fake data generator for InfluxDB`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(cfg.Series) == 0 {
-			log.Println("Error: no series configured; exiting. Don't forget to pass a config file with --config/-c.")
+			fmt.Println("Error: no series configured; exiting. Don't forget to pass a config file with --config/-c.\n")
 			cmd.Usage()
 			os.Exit(1)
 		}
