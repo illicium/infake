@@ -67,11 +67,13 @@ func initConfig() {
 
 	viper.AutomaticEnv()
 
-	if err := viper.ReadInConfig(); err != nil {
-		log.Fatal(err)
-	}
+	if cfgFile != "" {
+		if err := viper.ReadInConfig(); err != nil {
+			log.Fatal(err)
+		}
 
-	log.Printf("Using config file: %q", viper.ConfigFileUsed())
+		log.Printf("Using config file: %q", viper.ConfigFileUsed())
+	}
 
 	if err := viper.Unmarshal(&cfg); err != nil {
 		log.Fatal(err)
