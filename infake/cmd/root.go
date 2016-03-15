@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"log"
+	"os"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -17,6 +18,12 @@ var RootCmd = &cobra.Command{
 	Short: "Fake data generator for InfluxDB",
 	Long:  `Fake data generator for InfluxDB`,
 	Run: func(cmd *cobra.Command, args []string) {
+		if len(cfg.Series) == 0 {
+			log.Println("Error: no series configured; exiting. Don't forget to pass a config file with --config/-c.")
+			cmd.Usage()
+			os.Exit(1)
+		}
+
 		gen := infake.NewGen(cfg)
 
 		consumer, err := infake.NewConsumer(cfg.Output)
