@@ -116,11 +116,13 @@ func (s *Series) genPoint(rnd *rand.Rand, tpls *SeriesTemplates, boundVars map[s
 	return nil
 }
 
-func (s *Series) Generate(rnd *rand.Rand) (<-chan Point, error) {
+func (s *Series) Generate(rndSrc rand.Source) (<-chan Point, error) {
 	c := make(chan Point)
 
 	go func() {
 		defer close(c)
+
+		rnd := rand.New(rndSrc)
 
 		log.Printf("Generating series: %q\n", s.Id)
 

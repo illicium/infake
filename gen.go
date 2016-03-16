@@ -8,20 +8,14 @@ import (
 )
 
 type Gen struct {
-	rnd *rand.Rand
+	rndSrc rand.Source
 	Config
 }
 
 func NewGen(cfg Config) *Gen {
-	rnd := rand.New(rndSrc)
 	rndSrc := &LockedSource{src: rand.NewSource(cfg.Seed)}
 
-	gen := &Gen{
-		rnd,
-		cfg,
-	}
-
-	return gen
+	return &Gen{rndSrc, cfg}
 }
 
 func (gen *Gen) Generate() (<-chan Point, error) {
@@ -34,7 +28,7 @@ func (gen *Gen) Generate() (<-chan Point, error) {
 		go func(series Series) {
 			defer wg.Done()
 
-			sc, err := series.Generate(gen.rnd)
+			sc, err := series.Generate(gen.rndSrc)
 
 			if err != nil {
 				log.Print(err)
