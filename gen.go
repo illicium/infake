@@ -13,8 +13,8 @@ type Gen struct {
 }
 
 func NewGen(cfg Config) *Gen {
-	rndSrc := rand.NewSource(cfg.Seed)
 	rnd := rand.New(rndSrc)
+	rndSrc := &LockedSource{src: rand.NewSource(cfg.Seed)}
 
 	gen := &Gen{
 		rnd,
