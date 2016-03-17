@@ -26,6 +26,8 @@ output:
     writeConsistency: 'quorum'  # one,quorum,all,any
   # Maximum number of points per batch (uint)
   batchSize: 1000
+  # Maximum number of concurrent network connections to use when sending
+  maxConcurrency: 25
 
 # A series is a specification for generated measurements/points. All series
 # are generated independently, in parallel.

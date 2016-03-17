@@ -10,9 +10,10 @@ type Config struct {
 }
 
 type OutputConfig struct {
-	Type        string
-	HTTP        client.HTTPConfig
-	UDP         client.UDPConfig
-	BatchPoints client.BatchPointsConfig
-	BatchSize   uint
+	Type           string
+	HTTP           client.HTTPConfig
+	UDP            client.UDPConfig
+	BatchPoints    client.BatchPointsConfig
+	BatchSize      uint
+	MaxConcurrency uint
 }

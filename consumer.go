@@ -3,7 +3,9 @@ package infake
 import (
 	"fmt"
 	"io"
+	"log"
 	"os"
+	"sync"
 
 	"github.com/influxdata/influxdb/client/v2"
 )
@@ -45,9 +47,9 @@ type IoWriterConsumer struct {
 	io.Writer
 }
 
-func (w IoWriterConsumer) Consume(pts <-chan Point) error {
+func (c IoWriterConsumer) Consume(pts <-chan Point) error {
 	for p := range pts {
-		fmt.Fprintf(w.Writer, "%s\n", p)
+		fmt.Fprintf(c.Writer, "%s\n", p)
 	}
 
 	return nil
@@ -57,66 +59,79 @@ type InfluxDBConsumer struct {
 	Client            client.Client
 	BatchPointsConfig client.BatchPointsConfig
 	BatchSize         uint
-
-	batchPoints client.BatchPoints
+	MaxConcurrency    uint
 }
 
-func (w *InfluxDBConsumer) flush() error {
-	if w.batchPoints == nil {
-		err := w.makeBatchPoints()
+func (c InfluxDBConsumer) Consume(pts <-chan Point) error {
+	bps := make(chan client.BatchPoints)
+	errc := make(chan error, 1)
 
-		if err != nil {
-			return err
-		}
-	}
+	defer close(errc)
 
-	err := w.Client.Write(w.batchPoints)
+	go func() {
+		defer close(bps)
 
-	if err != nil {
-		return err
-	}
+		var bp client.BatchPoints
+		var consumed uint
+		var err error
 
-	return w.makeBatchPoints()
-}
+		for p := range pts {
+			if bp == nil {
+				bp, err = client.NewBatchPoints(c.BatchPointsConfig)
 
-func (w *InfluxDBConsumer) makeBatchPoints() error {
-	batchPoints, err := client.NewBatchPoints(w.BatchPointsConfig)
-
-	if err != nil {
-		return err
-	}
-
-	w.batchPoints = batchPoints
-
-	return nil
-}
-
-func (w InfluxDBConsumer) Consume(pts <-chan Point) error {
-	if w.batchPoints == nil {
-		err := w.makeBatchPoints()
-
-		if err != nil {
-			return err
-		}
-	}
-
-	var consumed uint
-
-	for p := range pts {
-		if consumed >= w.BatchSize && w.BatchSize > 0 {
-			err := w.flush()
-
-			if err != nil {
-				return err
+				if err != nil {
+					errc <- err
+					return
+				}
 			}
 
-			consumed = 0
+			if consumed >= c.BatchSize && c.BatchSize > 0 {
+				bps <- bp
+
+				bp = nil
+
+				consumed = 0
+			} else {
+				bp.AddPoint(p.Point)
+
+				consumed += 1
+			}
 		}
 
-		w.batchPoints.AddPoint(p.Point)
+		errc <- nil
+	}()
 
-		consumed += 1
+	var maxConcurrency int
+
+	if c.MaxConcurrency < 1 {
+		maxConcurrency = 1
+	} else {
+		maxConcurrency = int(c.MaxConcurrency)
 	}
 
-	return w.flush()
+	var wg sync.WaitGroup
+	wg.Add(maxConcurrency)
+
+	for i := 0; i < maxConcurrency; i++ {
+		go func() {
+			c.consumeBatchPoints(bps)
+			wg.Done()
+		}()
+	}
+
+	go func() {
+		wg.Wait()
+	}()
+
+	return <-errc
+}
+
+func (c InfluxDBConsumer) consumeBatchPoints(bps <-chan client.BatchPoints) {
+	for bp := range bps {
+		err := c.Client.Write(bp)
+
+		if err != nil {
+			log.Println(err)
+		}
+	}
 }
