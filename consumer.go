@@ -25,6 +25,7 @@ func NewConsumer(cfg OutputConfig) (Consumer, error) {
 		c = InfluxDBConsumer{
 			BatchPointsConfig: cfg.BatchPoints,
 			BatchSize:         cfg.BatchSize,
+			MaxConcurrency:    cfg.MaxConcurrency,
 		}
 
 		if cfg.Type == "http" {
