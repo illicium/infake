@@ -76,6 +76,12 @@ func (c InfluxDBConsumer) Consume(pts <-chan Point) error {
 		var consumed uint
 		var err error
 
+		batchSize := c.BatchSize
+
+		if batchSize < 1 {
+			batchSize = 1
+		}
+
 		for p := range pts {
 			if bp == nil {
 				bp, err = client.NewBatchPoints(c.BatchPointsConfig)
@@ -86,7 +92,7 @@ func (c InfluxDBConsumer) Consume(pts <-chan Point) error {
 				}
 			}
 
-			if consumed >= c.BatchSize && c.BatchSize > 0 {
+			if consumed >= batchSize {
 				bps <- bp
 
 				bp = nil
