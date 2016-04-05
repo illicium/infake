@@ -108,12 +108,10 @@ func (c InfluxDBConsumer) Consume(pts <-chan Point) error {
 		errc <- nil
 	}()
 
-	var maxConcurrency int
+	maxConcurrency := int(c.MaxConcurrency)
 
-	if c.MaxConcurrency < 1 {
+	if maxConcurrency < 1 {
 		maxConcurrency = 1
-	} else {
-		maxConcurrency = int(c.MaxConcurrency)
 	}
 
 	var wg sync.WaitGroup
