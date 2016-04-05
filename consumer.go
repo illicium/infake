@@ -105,6 +105,10 @@ func (c InfluxDBConsumer) Consume(pts <-chan Point) error {
 			}
 		}
 
+		if consumed > 0 && bp != nil {
+			bps <- bp
+		}
+
 		errc <- nil
 	}()
 
