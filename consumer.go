@@ -128,9 +128,7 @@ func (c InfluxDBConsumer) Consume(pts <-chan Point) error {
 		}()
 	}
 
-	go func() {
-		wg.Wait()
-	}()
+	wg.Wait()
 
 	return <-errc
 }
