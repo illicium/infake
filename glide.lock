@@ -1,5 +1,5 @@
-hash: ff427c743bf0b0815856fe40d084c0c029deee865a5a08ae197511781945d36d
-updated: 2016-03-14T16:43:58.37714978-07:00
+hash: ecbca9246b96d84515bfcbdf2bc6b03b9d413e76bd1e1a667fa27d607c3c112a
+updated: 2016-05-17T16:02:26.269418797-07:00
 imports:
 - name: github.com/BurntSushi/toml
   version: a4eecd407cf4129fc902ece859a0114e4cf1a7f4
@@ -40,6 +40,10 @@ imports:
   version: 7f60f83a2c81bc3c3c0d5297f61ddfa68da9d3b7
 - name: github.com/spf13/viper
   version: c975dc1b4eacf4ec7fdbf0873638de5d090ba323
+- name: github.com/stretchr/testify
+  version: 6cb3b85ef5a0efef77caef88363ec4d4b5c0976d
+  subpackages:
+  - assert
 - name: gopkg.in/fsnotify.v1
   version: 875cf421b32f8f1b31bd43776297876d01542279
 - name: gopkg.in/yaml.v2

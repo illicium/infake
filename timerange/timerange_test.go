@@ -3,6 +3,8 @@ package timerange
 import (
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func testTimeRangeValues(t *testing.T, tr TimeRange, want []time.Time) {
@@ -12,15 +14,7 @@ func testTimeRangeValues(t *testing.T, tr TimeRange, want []time.Time) {
 		t.Fatal(err)
 	}
 
-	if len(got) != len(want) {
-		t.Fatalf("(%+v).Values(): expected %v items, got %v", tr, len(want), len(got))
-	}
-
-	for i, val := range want {
-		if !got[i].Equal(val) {
-			t.Fatalf("(%+v).Values(): #%v: expected %v, got %v", tr, i, val, got[i])
-		}
-	}
+	assert.Equal(t, want, got)
 }
 
 func TestTimeRangeValues(t *testing.T) {
