@@ -19,14 +19,13 @@ func (v *Variable) expandValues() ([]Variable, error) {
 		return nil, fmt.Errorf("%q: Values is empty", v.Name)
 	}
 
-	vars := make([]Variable, 0, len(v.Values))
-
-	for _, val := range v.Values {
+	vars := make([]Variable, len(v.Values))
+	for i, val := range v.Values {
 		newVar := *v
 		newVar.Values = nil
 		newVar.Value = val
 
-		vars = append(vars, newVar)
+		vars[i] = newVar
 	}
 
 	return vars, nil

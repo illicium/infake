@@ -18,14 +18,15 @@ func NewGen(cfg Config) (*Gen, error) {
 	gen := &Gen{
 		RndSrc: rndSrc,
 	}
-	for _, seriesCfg := range cfg.Series {
+	gen.Series = make([]*Series, len(cfg.Series))
+	for i, seriesCfg := range cfg.Series {
 		s, err := NewSeries(seriesCfg)
 
 		if err != nil {
 			return nil, err
 		}
 
-		gen.Series = append(gen.Series, s)
+		gen.Series[i] = s
 	}
 
 	return gen, nil
