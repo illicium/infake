@@ -25,7 +25,11 @@ var RootCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		gen := infake.NewGen(cfg)
+		gen, err := infake.NewGen(cfg)
+
+		if err != nil {
+			log.Fatal(err)
+		}
 
 		consumer, err := infake.NewConsumer(cfg.Output)
 

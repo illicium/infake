@@ -51,18 +51,39 @@ series:
       pod: 'rgw{{printf "%03.f" .podNum}}ea'
       target_host: 'www.toolkit.mapquestapi.com'
       target_ipaddr: '205.188.201.151'
-      target_port:  '80'
-    # Field key/value pairs. The value specifies either a type of value to generate
-    # or an explicit string.
-    #   * int: random unit -1000-1000
-    #   * uint: random uint 0-1000
-    #   * float: random float 0-1
-    #   * any other string is used as an explicit string value
+      target_port: '80'
+    # Field key/value pairs
     fields:
-      2xx: 'uint'
-      4xx: 'uint'
-      5xx: 'uint'
-      latency_99: 'float'
+      # Value types: int, float, expfloat, normfloat
+      example_int:
+        type: 'int'
+        # Minimum int value [default: -1000]
+        min: -1000
+        # Maximum int value [default: 1000]
+        max: 1000
+      example_float:
+        type: 'float'
+        # Minimum float value [default: -1.0]
+        min: -1.0
+        # Maximum float value [default: 1.0]
+        max: 1.0
+      # Exponentially distributed float, [0, max_float_64], with
+      # given rate (lambda) and mean 1/lambda (1)
+      example_expfloat:
+        type: 'expfloat'
+        # Exponential rate (lambda) [non-zero; default: 1.0]
+        rate: 1.0
+      # Normally distributed float with given standard deviation and mean
+      example_normfloat:
+        type: 'normfloat'
+        # Standard deviation [non-zero; default: 1.0]
+        stddev: 1.0
+        # Mean [default: 0.0]
+        mean: 0.0
+      # Constant-value field
+      example_constant:
+        # Value can be any type supported by InfluxDB (int, float, string, bool)
+        value: 'hello world'
     # Variables are used when templating measurement name, tags, and fields.
     # The series generates a point for every combination of variable values at
     # a given time.

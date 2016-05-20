@@ -11,60 +11,99 @@ import (
 
 type Series struct {
 	Id        string
+	TimeRange *timerange.TimeRange
+	Name      StringTemplate
+	Tags      map[string]StringTemplate
+	Fields    map[string]Value
+	Variables []Variable
+
+	times []time.Time
+}
+
+type SeriesConfig struct {
+	Id        string
 	TimeRange timerange.TimeRangeConfig
 	Name      string
 	Tags      map[string]string
-	Fields    map[string]string
+	Fields    map[string]ValueConfig
 	Variables []Variable
 }
 
-type SeriesTemplates struct {
-	Name StringTemplate
-	Tags map[string]StringTemplate
-}
+func NewSeries(c SeriesConfig) (*Series, error) {
+	var err error
 
-func (s *Series) Templates() (*SeriesTemplates, error) {
-	nameTpl, err := template.New("Name").Parse(s.Name)
+	s := &Series{
+		Id:     c.Id,
+		Tags:   make(map[string]StringTemplate),
+		Fields: make(map[string]Value),
+	}
+
+	// TimeRange
+
+	s.TimeRange, err = timerange.New(c.TimeRange)
 
 	if err != nil {
 		return nil, err
 	}
 
-	tagTpls := make(map[string]StringTemplate)
+	// Name
 
-	for k, v := range s.Tags {
+	var nameTpl *template.Template
+
+	nameTpl, err = template.New("Name").Parse(c.Name)
+
+	if err != nil {
+		return nil, err
+	}
+
+	s.Name = StringTemplate{nameTpl}
+
+	// Tags
+
+	for k, v := range c.Tags {
 		tagTpl, err := template.New(k).Parse(v)
 
 		if err != nil {
 			return nil, err
 		}
 
-		tagTpls[k] = StringTemplate{tagTpl}
+		s.Tags[k] = StringTemplate{tagTpl}
 	}
 
-	return &SeriesTemplates{Name: StringTemplate{nameTpl}, Tags: tagTpls}, nil
+	// Fields
+
+	for k, valCfg := range c.Fields {
+		val, err := NewValue(valCfg)
+
+		if err != nil {
+			return nil, err
+		}
+
+		s.Fields[k] = val
+	}
+
+	// times
+
+	s.times, err = s.TimeRange.Values()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return s, nil
 }
 
-func (s *Series) genFields(rnd *rand.Rand) (map[string]interface{}, error) {
+func (s *Series) getFields(rnd *rand.Rand) map[string]interface{} {
 	f := make(map[string]interface{})
 
 	for k, v := range s.Fields {
-		switch v {
-		case "int":
-			f[k] = rnd.Int31n(2000) - 1000
-		case "uint":
-			f[k] = uint32(rnd.Int31n(1000))
-		case "float":
-			f[k] = rnd.Float64()
-		default:
-			f[k] = v
-		}
+		f[k] = v.Get(rnd)
 	}
 
-	return f, nil
+	return f
 }
 
-func (s *Series) genPoint(rnd *rand.Rand, tpls *SeriesTemplates, boundVars map[string]interface{}, vars []Variable, t time.Time, c chan<- Point) error {
+func (s *Series) genPoint(rnd *rand.Rand, boundVars map[string]interface{}, vars []Variable, t time.Time, c chan<- Point) error {
 	if len(vars) > 0 {
 		expanded, err := vars[0].Expand()
 
@@ -75,12 +114,12 @@ func (s *Series) genPoint(rnd *rand.Rand, tpls *SeriesTemplates, boundVars map[s
 		for _, ev := range expanded {
 			boundVars[ev.Name] = ev.Value
 
-			if err := s.genPoint(rnd, tpls, boundVars, vars[1:], t, c); err != nil {
+			if err := s.genPoint(rnd, boundVars, vars[1:], t, c); err != nil {
 				return err
 			}
 		}
 	} else {
-		name, err := tpls.Name.Execute(boundVars)
+		name, err := s.Name.Execute(boundVars)
 
 		if err != nil {
 			return err
@@ -88,7 +127,7 @@ func (s *Series) genPoint(rnd *rand.Rand, tpls *SeriesTemplates, boundVars map[s
 
 		tags := make(map[string]string)
 
-		for k, v := range tpls.Tags {
+		for k, v := range s.Tags {
 			tag, err := v.Execute(boundVars)
 
 			if err != nil {
@@ -98,11 +137,7 @@ func (s *Series) genPoint(rnd *rand.Rand, tpls *SeriesTemplates, boundVars map[s
 			tags[k] = tag
 		}
 
-		fields, err := s.genFields(rnd)
-
-		if err != nil {
-			return err
-		}
+		fields := s.getFields(rnd)
 
 		p, err := NewPoint(name, tags, fields, t)
 
@@ -126,31 +161,10 @@ func (s *Series) Generate(rndSrc rand.Source) (<-chan Point, error) {
 
 		log.Printf("Generating series: %q\n", s.Id)
 
-		tpls, err := s.Templates()
-
-		if err != nil {
-			log.Print(err)
-			return
-		}
-
-		tr, err := timerange.New(s.TimeRange)
-
-		if err != nil {
-			log.Print(err)
-			return
-		}
-
-		times, err := tr.Values()
-
-		if err != nil {
-			log.Print(err)
-			return
-		}
-
-		for _, t := range times {
+		for _, t := range s.times {
 			boundVars := make(map[string]interface{})
 
-			if err := s.genPoint(rnd, tpls, boundVars, s.Variables, t, c); err != nil {
+			if err := s.genPoint(rnd, boundVars, s.Variables, t, c); err != nil {
 				log.Print(err)
 			}
 		}

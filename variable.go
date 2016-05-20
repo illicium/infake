@@ -7,11 +7,11 @@ type Variable struct {
 	From   float64
 	To     float64
 	Step   float64
-	Value  Value
-	Values []Value
+	Value  VarValue
+	Values []VarValue
 }
 
-type Value interface{}
+type VarValue interface{}
 
 // Expand generates copies of the variable for each possible Value given by Values
 func (v *Variable) expandValues() ([]Variable, error) {

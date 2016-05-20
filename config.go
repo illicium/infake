@@ -5,8 +5,8 @@ import "github.com/influxdata/influxdb/client/v2"
 type Config struct {
 	Seed int64
 	// Time   int64
-	Output OutputConfig
-	Series []Series
+	Output    OutputConfig
+	Series    []SeriesConfig
 }
 
 type OutputConfig struct {

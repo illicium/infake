@@ -27,7 +27,7 @@ func TestExpandWithValue(t *testing.T) {
 func TestExpandValuesEmpty(t *testing.T) {
 	v := Variable{
 		Name:   "var",
-		Values: []Value{},
+		Values: []VarValue{},
 	}
 
 	_, err := v.expandValues()
@@ -40,7 +40,7 @@ func TestExpandValuesEmpty(t *testing.T) {
 func TestExpandValuesOne(t *testing.T) {
 	v := Variable{
 		Name:   "var",
-		Values: []Value{"foo"},
+		Values: []VarValue{"foo"},
 	}
 
 	v2 := Variable{
@@ -64,7 +64,7 @@ func TestExpandValuesOne(t *testing.T) {
 func TestExpandValuesTwo(t *testing.T) {
 	v := Variable{
 		Name:   "var",
-		Values: []Value{"foo", "bar"},
+		Values: []VarValue{"foo", "bar"},
 	}
 
 	got, err := v.expandValues()
