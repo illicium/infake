@@ -103,3 +103,11 @@ func (tr *TimeRange) Values() ([]time.Time, error) {
 
 	return vals, nil
 }
+
+func (tr *TimeRange) Contains(t time.Time) bool {
+	return (t.After(tr.From) && t.Before(tr.To)) || t.Equal(tr.From)
+}
+
+func (tr *TimeRange) ContainsInclusive(t time.Time) bool {
+	return tr.Contains(t) || t.Equal(tr.To)
+}

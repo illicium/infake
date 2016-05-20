@@ -119,3 +119,31 @@ func TestTimeRangeValuesZeroStepEqual(t *testing.T) {
 
 	testTimeRangeValues(t, tr, want)
 }
+
+func TestTimeRangeContains(t *testing.T) {
+	tr := TimeRange{
+		From: time.Date(2016, time.January, 1, 0, 0, 0, 0, time.UTC),
+		To:   time.Date(2016, time.January, 1, 23, 59, 59, 0, time.UTC),
+	}
+
+	assert.True(t, tr.Contains(tr.From))
+	assert.False(t, tr.Contains(tr.To))
+
+	assert.True(t, tr.Contains(time.Date(2016, time.January, 1, 5, 0, 0, 0, time.UTC)))
+	assert.False(t, tr.Contains(time.Date(2015, time.December, 31, 0, 0, 0, 0, time.UTC)))
+	assert.False(t, tr.Contains(time.Date(2016, time.January, 1, 23, 59, 59, 123, time.UTC)))
+}
+
+func TestTimeRangeContainsInclusive(t *testing.T) {
+	tr := TimeRange{
+		From: time.Date(2016, time.January, 1, 0, 0, 0, 0, time.UTC),
+		To:   time.Date(2016, time.January, 1, 23, 59, 59, 0, time.UTC),
+	}
+
+	assert.True(t, tr.ContainsInclusive(tr.From))
+	assert.True(t, tr.ContainsInclusive(tr.To))
+
+	assert.True(t, tr.ContainsInclusive(time.Date(2016, time.January, 1, 5, 0, 0, 0, time.UTC)))
+	assert.False(t, tr.ContainsInclusive(time.Date(2015, time.December, 31, 0, 0, 0, 0, time.UTC)))
+	assert.False(t, tr.ContainsInclusive(time.Date(2016, time.January, 1, 23, 59, 59, 123, time.UTC)))
+}
