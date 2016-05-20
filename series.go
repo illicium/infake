@@ -158,9 +158,3 @@ func (s *Series) Generate(rndSrc rand.Source) (<-chan Point, error) {
 
 	return c, nil
 }
-
-func (s *Series) Expand() ([]Series, error) {
-	series := []Series{}
-
-	return series, nil
-}
