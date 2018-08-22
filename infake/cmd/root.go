@@ -8,7 +8,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"revision.aeip.apigee.net/dia/infake"
+	"github.com/ypomortsev/infake"
 )
 
 var cfgFile string
@@ -66,9 +66,10 @@ func init() {
 func initConfig() {
 	if cfgFile != "" {
 		viper.SetConfigFile(cfgFile)
+	} else {
+		viper.SetConfigName(".infake")
 	}
 
-	viper.SetConfigName(".infake")
 	viper.AddConfigPath("$HOME")
 	viper.SetEnvPrefix("infake")
 

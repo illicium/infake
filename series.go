@@ -6,7 +6,7 @@ import (
 	"text/template"
 	"time"
 
-	"revision.aeip.apigee.net/dia/infake/timerange"
+	"github.com/ypomortsev/infake/timerange"
 )
 
 type Series struct {

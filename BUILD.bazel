@@ -1,0 +1,36 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+load("@bazel_gazelle//:def.bzl", "gazelle")
+
+# gazelle:prefix github.com/ypomortsev/infake
+gazelle(name = "gazelle")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "config.go",
+        "consumer.go",
+        "gen.go",
+        "lockedsource.go",
+        "point.go",
+        "series.go",
+        "stringtemplate.go",
+        "value.go",
+        "variable.go",
+    ],
+    importpath = "github.com/ypomortsev/infake",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//timerange:go_default_library",
+        "@com_github_influxdata_influxdb//client/v2:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = [
+        "value_test.go",
+        "variable_test.go",
+    ],
+    embed = [":go_default_library"],
+    deps = ["@com_github_stretchr_testify//assert:go_default_library"],
+)

@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"revision.aeip.apigee.net/dia/infake/infake/cmd"
+	"github.com/ypomortsev/infake/infake/cmd"
 )
 
 func main() {
