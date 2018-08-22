@@ -8,8 +8,8 @@ import (
 )
 
 type Gen struct {
-	RndSrc    rand.Source
-	Series    []*Series
+	RndSrc rand.Source
+	Series []*Series
 }
 
 func NewGen(cfg Config) (*Gen, error) {
@@ -42,7 +42,7 @@ func (gen *Gen) Generate() (<-chan Point, error) {
 		go func(series *Series) {
 			defer wg.Done()
 
-			sc, err := series.Generate(gen.rndSrc)
+			sc, err := series.Generate(gen.RndSrc)
 
 			if err != nil {
 				log.Print(err)
