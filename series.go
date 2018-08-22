@@ -33,9 +33,10 @@ func NewSeries(c SeriesConfig) (*Series, error) {
 	var err error
 
 	s := &Series{
-		Id:     c.Id,
-		Tags:   make(map[string]StringTemplate),
-		Fields: make(map[string]Value),
+		Id:        c.Id,
+		Tags:      make(map[string]StringTemplate),
+		Fields:    make(map[string]Value),
+		Variables: c.Variables,
 	}
 
 	// TimeRange
